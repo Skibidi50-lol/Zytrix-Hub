@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zytrix Hub</title>
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #0f172a, #020617);
+            color: #e5e7eb;
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 700px;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(15px);
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            text-align: center;
+            animation: fadeIn 1s ease;
+        }
+
+        h1 {
+            font-size: 38px;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #cbd5f5;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .code-box {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: left;
+            font-family: monospace;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .code-box:hover {
+            transform: scale(1.02);
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 22px;
+            margin: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #5865F2, #4752c4);
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(88,101,242,0.4);
+        }
+
+        .games-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255,255,255,0.1);
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .games-box.show {
+            opacity: 1;
+            max-height: 200px;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+    </style>
+
+    <script>
+        function copyDiscord() {
+            const link = "https://discord.gg/yourlinkhere"; // replace this
+            navigator.clipboard.writeText(link);
+            alert("Discord link copied!");
+        }
+
+        function toggleGames() {
+            const box = document.getElementById("games");
+            box.classList.toggle("show");
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Zytrix Hub</h1>
+
+        <div class="description">
+            <strong>What is Zytrix Hub?</strong><br>
+            Zytrix Hub is a free Roblox script hub developed by Skibidi50-lol.<br>
+            It is currently under development.
+        </div>
+
+        <div class="code-box">
+<pre>--soon....</pre>
+        </div>
+
+        <div class="buttons">
+            <button onclick="copyDiscord()">Join Discord</button>
+            <button onclick="toggleGames()">Supported Games</button>
+        </div>
+
+        <div id="games" class="games-box">
+            <strong>Supported Games</strong><br><br>
+            Flick<br>
+            Arsenal
+        </div>
+    </div>
+
+</body>
+</html>
