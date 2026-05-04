@@ -1,0 +1,139 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+local RunService = game:GetService("RunService")
+local StarterGui = game:GetService("StarterGui")
+local UIS = game:GetService("UserInputService")
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Camlock",
+    Text = "Locking camera to NPC's Neck",
+    Duration = 3
+})
+
+-- GUI
+local screenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+screenGui.Name = "Camlock_GUI"
+
+local button = Instance.new("TextButton")
+button.Name = "CamlockToggle"
+button.Size = UDim2.new(0, 150, 0, 50)
+button.Position = UDim2.new(1, -155, 0.1, -25)
+button.BackgroundColor3 = Color3.new(0, 0, 0)
+button.TextColor3 = Color3.new(1, 1, 1)
+button.Text = "ᴄᴀᴍʟᴏᴄᴋ: ᴏɴ"
+button.Font = Enum.Font.SourceSans
+button.TextScaled = true
+button.TextSize = 30
+button.Parent = screenGui
+
+local corner = Instance.new("UICorner", button)
+corner.CornerRadius = UDim.new(0, 12)
+
+local dragging = false
+local dragInput, dragStart, startPos
+
+local function update(input)
+    local delta = input.Position - dragStart
+    button.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
+end
+
+button.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = button.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+button.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+UIS.InputChanged:Connect(function(input)
+    if dragging and input == dragInput then
+        update(input)
+    end
+end)
+
+local function getClosestNPC()
+    local closest, shortestDist = nil, math.huge
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj ~= player.Character then
+            local hum = obj:FindFirstChildWhichIsA("Humanoid")
+            local neck = obj:FindFirstChild("Neck") or obj:FindFirstChild("Head")
+
+            if hum and neck and hum.Health > 0 then
+                local isPlayer = false
+                for _, plr in ipairs(Players:GetPlayers()) do
+                    if plr.Character == obj then
+                        isPlayer = true
+                        break
+                    end
+                end
+
+                if not isPlayer then
+                    local dist = (neck.Position - camera.CFrame.Position).Magnitude
+                    if dist < shortestDist then
+                        shortestDist = dist
+                        closest = neck
+                    end
+                end
+            end
+        end
+    end
+
+    return closest
+end
+
+local camlockEnabled = false
+local camlockLoop
+
+local function toggleCamlock()
+    camlockEnabled = not camlockEnabled
+    button.Text = camlockEnabled and "ᴄᴀᴍʟᴏᴄᴋ: ᴏɴ" or "ᴄᴀᴍʟᴏᴄᴋ: ᴏғғ"
+
+    if camlockEnabled then
+        camlockLoop = RunService.RenderStepped:Connect(function()
+            local target = getClosestNPC()
+            if target then
+                camera.CFrame = CFrame.new(camera.CFrame.Position, target.Position)
+            end
+        end)
+    else
+        if camlockLoop then
+            camlockLoop:Disconnect()
+            camlockLoop = nil
+        end
+    end
+end
+
+button.MouseButton1Click:Connect(toggleCamlock)
+
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.Q then
+        toggleCamlock()
+    end
+end)
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Camlock",
+    Text = "Press Q To Toggle Camlock",
+    Duration = 5
+})
